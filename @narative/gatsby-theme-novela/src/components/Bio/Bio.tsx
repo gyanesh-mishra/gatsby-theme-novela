@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import Image from '@components/Image';
 import { IAuthor } from '@types';
 
-function Bio({ author }: IAuthor) {
+const Bio: React.FC<IAuthor> = ({ author }) => {
   return (
     <BioContainer>
       <BioAvatar
@@ -15,13 +15,13 @@ function Bio({ author }: IAuthor) {
         aria-label="Author's bio"
       >
         <BioAvatarInner>
-          <Image src={author.avatar.medium} />
+          <RoundedImage src={author.avatar.medium} />
         </BioAvatarInner>
       </BioAvatar>
       <BioText dangerouslySetInnerHTML={{ __html: author.bio }} />
     </BioContainer>
   );
-}
+};
 
 export default Bio;
 
@@ -62,6 +62,10 @@ const BioAvatar = styled.div`
     height: 50px;
     border: 2px solid ${p => p.theme.colors.accent};
   }
+`;
+
+const RoundedImage = styled(Image)`
+  border-radius: 50%;
 `;
 
 const BioAvatarInner = styled.div`

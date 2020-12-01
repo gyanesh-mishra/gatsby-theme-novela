@@ -1,23 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
-import styled from '@emotion/styled';
-import throttle from 'lodash/throttle';
-import { graphql, useStaticQuery } from 'gatsby';
+import React, { useRef, useState, useEffect } from "react";
+import styled from "@emotion/styled";
+import throttle from "lodash/throttle";
+import { graphql, useStaticQuery } from "gatsby";
 
-import Layout from '@components/Layout';
-import MDXRenderer from '@components/MDX';
-import Progress from '@components/Progress';
-import Section from '@components/Section';
-import Subscription from '@components/Subscription';
+import Layout from "@components/Layout";
+import MDXRenderer from "@components/MDX";
+import Progress from "@components/Progress";
+import Section from "@components/Section";
+import Subscription from "@components/Subscription";
 
-import mediaqueries from '@styles/media';
-import { debounce } from '@utils';
+import mediaqueries from "@styles/media";
+import { debounce } from "@utils";
 
-import ArticleAside from '../sections/article/Article.Aside';
-import ArticleHero from '../sections/article/Article.Hero';
-import ArticleControls from '../sections/article/Article.Controls';
-import ArticlesNext from '../sections/article/Article.Next';
-import ArticleSEO from '../sections/article/Article.SEO';
-import ArticleShare from '../sections/article/Article.Share';
+import ArticleAside from "../sections/article/Article.Aside";
+import ArticleHero from "../sections/article/Article.Hero";
+import ArticleControls from "../sections/article/Article.Controls";
+import ArticlesNext from "../sections/article/Article.Next";
+import ArticleSEO from "../sections/article/Article.SEO";
+import ArticleShare from "../sections/article/Article.Share";
+import ArticleFooter from './article.footer.template';
+
+import { Template } from "@types";
 
 const siteQuery = graphql`
   {
@@ -33,7 +36,7 @@ const siteQuery = graphql`
   }
 `;
 
-function Article({ pageContext, location }) {
+const Article: Template = ({ pageContext, location }) => {
   const contentSectionRef = useRef<HTMLElement>(null);
 
   const [hasCalculated, setHasCalculated] = useState<boolean>(false);
@@ -42,7 +45,7 @@ function Article({ pageContext, location }) {
   const results = useStaticQuery(siteQuery);
   const name = results.allSite.edges[0].node.siteMetadata.name;
 
-  const { article, authors, mailchimp, next, categories } = pageContext;
+  const { article, authors, next, categories } = pageContext;
 
   useEffect(() => {
     const calculateBodySize = throttle(() => {
@@ -97,7 +100,7 @@ function Article({ pageContext, location }) {
           <ArticleShare />
         </MDXRenderer>
       </ArticleBody>
-      {mailchimp && article.subscription && <Subscription />}
+      <ArticleFooter pageContext={pageContext} />
       {next.length > 0 && (
         <NextArticle narrow>
           <FooterNext>More articles from {name}</FooterNext>
@@ -107,7 +110,7 @@ function Article({ pageContext, location }) {
       )}
     </Layout>
   );
-}
+};
 
 export default Article;
 

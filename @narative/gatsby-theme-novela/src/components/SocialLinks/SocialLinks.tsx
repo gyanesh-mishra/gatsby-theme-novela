@@ -19,26 +19,41 @@ const icons = {
   twitter: Icons.Twitter,
   facebook: Icons.Facebook,
   instagram: Icons.Instagram,
+  devto: Icons.DevTo,
   github: Icons.Github,
+  stackoverflow: Icons.Stackoverflow,
   youtube: Icons.YouTube,
   medium: Icons.Medium,
+  notion: Icons.Notion,
   unsplash: Icons.Unsplash,
   patreon: Icons.Patreon,
   paypal: Icons.Paypal,
+  digitalocean: Icons.DigitalOcean,
+  tripadvisor: Icons.TripAdvisor,
+  buymeacoffee: Icons.Buymeacoffee,
+  mailto: Icons.Mailto,
+  url: Icons.Url
 };
 
 const getHostname = url => {
-  return new URL(url.toLowerCase()).hostname.replace('www.', '').split('.')[0];
+  return new URL(url.toLowerCase()).hostname.replace(/www|com|net|\.so|org|[.-]/g, '').split('.')[0];
 };
 
-function SocialLinks({ links, fill = '#73737D' }: SocialLinksProps) {
+const getServicename = url => {
+  return url.toLowerCase().split(':')[0];
+};
+
+const SocialLinks: React.FC<SocialLinksProps> = ({
+  links,
+  fill = '#73737D',
+}) => {
   if (!links) return null;
 
   return (
     <>
       {links.map(option => {
-        const name = getHostname(option.url);
-        const Icon = icons[name];
+        const name = option.name || getHostname(option.url) || getServicename(option.url);
+        const Icon = icons[name] ? icons[name] : icons['url'];
         if (!Icon) {
           throw new Error(
             `unsupported social link name=${name} / url=${option.url}`,
@@ -48,7 +63,7 @@ function SocialLinks({ links, fill = '#73737D' }: SocialLinksProps) {
           <SocialIconContainer
             key={option.url}
             target="_blank"
-            rel="noopener"
+            rel="noopener nofollow"
             data-a11y="false"
             aria-label={`Link to ${option.url}`}
             href={option.url}
@@ -60,7 +75,7 @@ function SocialLinks({ links, fill = '#73737D' }: SocialLinksProps) {
       })}
     </>
   );
-}
+};
 
 export default SocialLinks;
 

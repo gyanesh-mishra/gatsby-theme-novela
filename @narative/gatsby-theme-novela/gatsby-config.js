@@ -3,8 +3,10 @@
 module.exports = ({
   contentAuthors = 'content/authors',
   contentPosts = 'content/posts',
+  pathPrefix = '',
   sources: { local, contentful } = { local: true, contentful: false },
 }) => ({
+  pathPrefix,
   mapping: {
     'Mdx.frontmatter.author': `AuthorsYaml`,
   },
@@ -52,7 +54,7 @@ module.exports = ({
         },
         feeds: [
           {
-            serialize: ({ query: { site, allArticle, allContentfulPost } }) => {
+            serialize: ({ query: { site, allArticle, allContentfulArticle } }) => {
               if (local && !contentful) {
                 return allArticle.edges
                   .filter(edge => !edge.node.secret)
@@ -63,26 +65,27 @@ module.exports = ({
                       date: edge.node.date,
                       url: site.siteMetadata.siteUrl + edge.node.slug,
                       guid: site.siteMetadata.siteUrl + edge.node.slug,
+                      // body is raw JS and MDX; will need to be processed before it can be used
                       // custom_elements: [{ "content:encoded": edge.node.body }],
                       author: edge.node.author,
                     };
                   });
               } else if (!local && contentful) {
-                return allContentfulPost.edges
+                return allContentfulArticle.edges
                   .filter(edge => !edge.node.secret)
                   .map(edge => {
                     return {
                       ...edge.node,
                       description: edge.node.excerpt,
                       date: edge.node.date,
-                      url: site.siteMetadata.siteUrl + edge.node.slug,
-                      guid: site.siteMetadata.siteUrl + edge.node.slug,
-                      // custom_elements: [{ "content:encoded": edge.node.body }],
-                      author: edge.node.author,
+                      url: site.siteMetadata.siteUrl + '/' + edge.node.slug,
+                      guid: site.siteMetadata.siteUrl + '/' + edge.node.slug,
+                      custom_elements: [{ "content:encoded": edge.node.body.childMarkdownRemark.html }],
+                      author: edge.node.author ? edge.node.author.name : '',
                     };
                   });
               } else {
-                const allArticlesData = { ...allArticle, ...allContentfulPost };
+                const allArticlesData = { ...allArticle, ...allContentfulArticle };
                 return allArticlesData.edges
                   .filter(edge => !edge.node.secret)
                   .map(edge => {
@@ -93,7 +96,7 @@ module.exports = ({
                       url: site.siteMetadata.siteUrl + edge.node.slug,
                       guid: site.siteMetadata.siteUrl + edge.node.slug,
                       // custom_elements: [{ "content:encoded": edge.node.body }],
-                      author: edge.node.author,
+                      author: edge.node.author ? edge.node.author.name : '',
                     };
                   });
               }
@@ -105,6 +108,7 @@ module.exports = ({
                 allArticle(sort: {order: DESC, fields: date}) {
                   edges {
                     node {
+                      body
                       excerpt
                       date
                       slug
@@ -119,13 +123,18 @@ module.exports = ({
                 : !local && contentful
                 ? `
               {
-                allContentfulPost(sort: {order: DESC, fields: date}) {
+                allContentfulArticle(sort: {order: DESC, fields: date}) {
                   edges {
                     node {
                       excerpt
                       date
                       slug
                       title
+                      body {
+                        childMarkdownRemark {
+                          html
+                        }
+                      }
                       author {
                         name
                       }
@@ -140,6 +149,7 @@ module.exports = ({
                 allArticle(sort: {order: DESC, fields: date}) {
                   edges {
                     node {
+                      body
                       excerpt
                       date
                       slug
@@ -149,15 +159,18 @@ module.exports = ({
                     }
                   }
                 }
-              }
-              {
-                allContentfulPost(sort: {order: DESC, fields: date}) {
+                allContentfulArticle(sort: {order: DESC, fields: date}) {
                   edges {
                     node {
                       excerpt
                       date
                       slug
                       title
+                      body {
+                        childMarkdownRemark {
+                          html
+                        }
+                      }
                       author {
                         name
                       }
@@ -199,6 +212,30 @@ module.exports = ({
               quality: 80,
               withWebp: true,
             },
+          },
+          {
+            resolve: `@raae/gatsby-remark-oembed`,
+            options: {
+              providers: {
+                include: ["Instagram"]
+              }
+            }
+          },
+          {
+            resolve: "gatsby-remark-embed-video",
+            options: {
+              width: 680,
+              ratio: 1.77, // Optional: Defaults to 16/9 = 1.77
+              height: 400, // Optional: Overrides optional.ratio
+              related: false, //Optional: Will remove related videos from the end of an embedded YouTube video.
+              noIframeBorder: true, //Optional: Disable insertion of <style> border: 0
+              urlOverrides: [
+                {
+                  id: 'youtube',
+                  embedURL: (videoId) => `https://www.youtube-nocookie.com/embed/${videoId}`,
+                }
+              ] //Optional: Override URL of a service provider, e.g to enable youtube-nocookie support
+            }
           },
           { resolve: `gatsby-remark-copy-linked-files` },
           { resolve: `gatsby-remark-numbered-footnotes` },

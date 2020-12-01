@@ -1,16 +1,24 @@
 // Social
 import Behance from './social/Behance.Icon';
 import Dribbble from './social/Dribbble.Icon';
+import DevTo from './social/DevTo.Icon';
 import Facebook from './social/Facebook.Icon';
 import Instagram from './social/Instagram.Icon';
 import Twitter from './social/Twitter.Icon';
 import LinkedIn from './social/LinkedIn.Icon';
 import Medium from './social/Medium.Icon';
+import Notion from './social/Notion.Icon';
 import Github from './social/Github.Icon';
+import Stackoverflow from './social/Stackoverflow.Icon';
 import Unsplash from './social/Unsplash.Icon';
 import YouTube from './social/YouTube.Icon';
 import Patreon from './social/Patreon.Icon';
 import Paypal from './social/Paypal.Icon';
+import DigitalOcean from './social/DigitalOcean.Icon';
+import TripAdvisor from './social/TripAdvisor.Icon';
+import Buymeacoffee from './social/Buymeacoffee.Icon';
+import Mailto from './social/Mailto.Icon';
+import Url from './social/Url.Icon';
 
 // UI
 import ChevronLeft from './ui/ChevronLeft.Icon';
@@ -26,16 +34,24 @@ import Tiles from './ui/Tiles.Icon';
 export default {
   Behance,
   Dribbble,
+  DevTo,
   Facebook,
   Instagram,
   Twitter,
   LinkedIn,
   Medium,
+  Notion,
   Github,
+  Stackoverflow,
   Unsplash,
   YouTube,
   Patreon,
   Paypal,
+  DigitalOcean,
+  TripAdvisor,
+  Buymeacoffee,
+  Mailto,
+  Url,
 
   ChevronLeft,
   Copied,

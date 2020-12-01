@@ -16,7 +16,20 @@ const siteQuery = graphql`
             name
             social {
               url
+              name
             }
+          }
+        }
+      }
+    }
+    allMdx(
+      sort: { fields: frontmatter___date, order: ASC }
+      filter: { frontmatter: { date: { ne: null } } }
+    ) {
+      edges {
+        node {
+          frontmatter {
+            date
           }
         }
       }
@@ -24,9 +37,17 @@ const siteQuery = graphql`
   }
 `;
 
-function Footer() {
+const Footer: React.FC<{}> = () => {
   const results = useStaticQuery(siteQuery);
   const { name, social } = results.allSite.edges[0].node.siteMetadata;
+
+  const copyrightDate = (() => {
+    const { edges } = results.allMdx;
+    const years = [0, edges.length - 1].map((edge) =>
+      new Date(edges[edge].node.frontmatter.date).getFullYear()
+    );
+    return years[0] === years[1] ? `${years[0]}` : `${years[0]}–${years[1]}`;
+  })();
 
   return (
     <>
@@ -35,7 +56,7 @@ function Footer() {
         <HoritzontalRule />
         <FooterContainer>
           <FooterText>
-            © {new Date().getFullYear()} {name}
+            © {copyrightDate} {name}
           </FooterText>
           <div>
             <SocialLinks links={social} />
@@ -44,7 +65,7 @@ function Footer() {
       </Section>
     </>
   );
-}
+};
 
 export default Footer;
 

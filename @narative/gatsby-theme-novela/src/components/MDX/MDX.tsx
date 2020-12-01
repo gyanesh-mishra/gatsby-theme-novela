@@ -1,26 +1,28 @@
-import React from "react";
+import React from 'react';
 
-import { MDXRenderer } from "gatsby-plugin-mdx";
-import { MDXProvider } from "@mdx-js/react";
+import { MDXRenderer } from 'gatsby-plugin-mdx';
+import { MDXProvider } from '@mdx-js/react';
 
-import styled from "@emotion/styled";
-import { css } from "@emotion/core";
-import { useColorMode } from "theme-ui";
+import styled from '@emotion/styled';
+import { css } from '@emotion/core';
+import { useColorMode } from 'theme-ui';
 
-import Anchor from "@components/Anchor";
-import Blockquote from "@components/Blockquote";
-import Code from "@components/Code";
-import Headings from "@components/Headings";
-import HorizontalRule from "@components/HorizontalRule";
-import Lists from "@components/Lists";
-import Paragraph from "@components/Paragraph";
-import Tables from "@components/Tables";
-import { ImageZoom } from "@components/Image";
-
-import mediaqueries from "@styles/media";
-import { toKebabCase } from "@utils";
+import Anchor from '@components/Anchor';
+import Blockquote from '@components/Blockquote';
+import Code from '@components/Code';
+import Headings from '@components/Headings';
+import HorizontalRule from '@components/HorizontalRule';
+import Lists from '@components/Lists';
+import Paragraph from '@components/Paragraph';
+import Tables from '@components/Tables';
+import { ImageZoom } from '@components/Image';
+import Figcaption from '@components/Figcaption';
+import * as shortcodes from '@blocks/kit';
+import mediaqueries from '@styles/media';
+import { toKebabCase } from '@utils';
 
 const components = {
+  ...shortcodes,
   img: ImageZoom,
   a: Anchor,
   blockquote: Blockquote,
@@ -39,30 +41,35 @@ const components = {
   table: Tables.Table,
   thead: Tables.Head,
   th: Tables.HeadCell,
-  td: Tables.Cell
+  td: Tables.Cell,
+  figcaption: Figcaption,
 };
 
-function MDX({ content, children, ...props }) {
+interface MDXProps {
+  content: React.ReactNode;
+}
+
+const MDX: React.FC<MDXProps> = ({ content, children, ...props }) => {
   const [colorMode] = useColorMode();
 
   return (
     <MDXProvider components={components}>
       <MDXBody>
-        <MDXRenderer isDark={colorMode === "dark"} {...props}>
+        <MDXRenderer isDark={colorMode === 'dark'} {...props}>
           {content}
         </MDXRenderer>
         {children}
       </MDXBody>
     </MDXProvider>
   );
-}
+};
 
 export default MDX;
 
 const IMAGE_WIDTHS = {
-  regular: "680px",
-  large: "1004px",
-  full: "100vw"
+  regular: '680px',
+  large: '1004px',
+  full: '100vw',
 };
 
 const ARTICLE_WIDTH = css`
@@ -120,7 +127,7 @@ const HeadingsCSS = css`
 
 const PrismCSS = p => css`
   .prism-code {
-    overflow: scroll;
+    overflow: auto;
     width: 100%;
     max-width: 744px;
     margin: 0 auto;
@@ -188,6 +195,7 @@ const PrismCSS = p => css`
     `};
 
     ${mediaqueries.phablet`
+      text-size-adjust: none;
       border-radius: 0;
       margin: 0 auto 25px;
       padding: 25px 20px;
@@ -222,7 +230,8 @@ const ImageCSS = css`
   }
 
   div.Image__Small {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     position: relative;
     max-width: 100%;
     height: auto;
@@ -289,6 +298,11 @@ const ImageCSS = css`
     width: ${IMAGE_WIDTHS.full};
     margin: 25px auto 60px;
     pointer-events: none;
+
+    /* To allow interaction for all external interactions: YouTube, Twitter, Gist */
+    iframe {
+      pointer-events: all;
+    }
 
     img {
       border-radius: 0;

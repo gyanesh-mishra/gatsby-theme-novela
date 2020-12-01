@@ -53,6 +53,10 @@ export const globalStyles = css`
     height: 100%;
   }
 
+  article {
+    word-break: break-word;
+  }
+
   button,
   a {
     text-decoration: none;
@@ -70,6 +74,7 @@ export const globalStyles = css`
   svg,
   video {
     vertical-align: middle;
+    align-self: center;
   }
 
   input,

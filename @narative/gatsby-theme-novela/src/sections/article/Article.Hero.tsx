@@ -8,13 +8,14 @@ import mediaqueries from '@styles/media';
 import { IArticle, IAuthor } from '@types';
 
 import ArticleAuthors from './Article.Authors';
+import ArticleCategories from './Article.Categories';
 
 interface ArticleHeroProps {
   article: IArticle;
   authors: IAuthor[];
 }
 
-const ArticleHero: React.FC<ArticleHeroProps> = ({ article, authors }) => {
+const ArticleHero: React.FC<ArticleHeroProps> = ({ article, authors,categories }) => {
   const hasCoAUthors = authors.length > 1;
   const hasHeroImage =
     article.hero &&
@@ -27,6 +28,7 @@ const ArticleHero: React.FC<ArticleHeroProps> = ({ article, authors }) => {
         <HeroHeading>{article.title}</HeroHeading>
         <HeroSubtitle hasCoAUthors={hasCoAUthors}>
           <ArticleAuthors authors={authors} />
+          <ArticleCategories categories={categories} />
           <ArticleMeta hasCoAUthors={hasCoAUthors}>
             {article.date} · {article.timeToRead} min read
           </ArticleMeta>
